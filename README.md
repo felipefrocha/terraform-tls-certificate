@@ -11,6 +11,7 @@
 |------|---------|
 | <a name="provider_null"></a> [null](#provider\_null) | n/a |
 | <a name="provider_random"></a> [random](#provider\_random) | n/a |
+| <a name="provider_template"></a> [template](#provider\_template) | n/a |
 | <a name="provider_tls"></a> [tls](#provider\_tls) | n/a |
 
 ## Modules
@@ -32,6 +33,7 @@ No modules.
 | [tls_private_key.key](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/private_key) | resource |
 | [tls_private_key.leaf](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/private_key) | resource |
 | [tls_self_signed_cert.ca](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/self_signed_cert) | resource |
+| [template_file.file](https://registry.terraform.io/providers/hashicorp/template/latest/docs/data-sources/file) | data source |
 
 ## Inputs
 
@@ -64,7 +66,26 @@ No modules.
 
 | Name | Description |
 |------|-------------|
+| <a name="output_README"></a> [README](#output\_README) | n/a |
 | <a name="output_algorithm"></a> [algorithm](#output\_algorithm) | n/a |
+| <a name="output_ca_cert_filename"></a> [ca\_cert\_filename](#output\_ca\_cert\_filename) | n/a |
+| <a name="output_ca_cert_name"></a> [ca\_cert\_name](#output\_ca\_cert\_name) | CA - TLS self signed cert |
+| <a name="output_ca_cert_pem"></a> [ca\_cert\_pem](#output\_ca\_cert\_pem) | n/a |
+| <a name="output_ca_cert_validity_end_time"></a> [ca\_cert\_validity\_end\_time](#output\_ca\_cert\_validity\_end\_time) | n/a |
+| <a name="output_ca_cert_validity_start_time"></a> [ca\_cert\_validity\_start\_time](#output\_ca\_cert\_validity\_start\_time) | n/a |
+| <a name="output_ca_private_key_pem"></a> [ca\_private\_key\_pem](#output\_ca\_private\_key\_pem) | CA - TLS private key |
+| <a name="output_ca_public_key_openssh"></a> [ca\_public\_key\_openssh](#output\_ca\_public\_key\_openssh) | n/a |
+| <a name="output_ca_public_key_pem"></a> [ca\_public\_key\_pem](#output\_ca\_public\_key\_pem) | n/a |
+| <a name="output_leaf_cert_filename"></a> [leaf\_cert\_filename](#output\_leaf\_cert\_filename) | n/a |
+| <a name="output_leaf_cert_name"></a> [leaf\_cert\_name](#output\_leaf\_cert\_name) | Leaf - TLS locally signed cert |
+| <a name="output_leaf_cert_pem"></a> [leaf\_cert\_pem](#output\_leaf\_cert\_pem) | n/a |
+| <a name="output_leaf_cert_request_pem"></a> [leaf\_cert\_request\_pem](#output\_leaf\_cert\_request\_pem) | Leaf - TLS cert request |
+| <a name="output_leaf_cert_validity_end_time"></a> [leaf\_cert\_validity\_end\_time](#output\_leaf\_cert\_validity\_end\_time) | n/a |
+| <a name="output_leaf_cert_validity_start_time"></a> [leaf\_cert\_validity\_start\_time](#output\_leaf\_cert\_validity\_start\_time) | n/a |
+| <a name="output_leaf_private_key_filename"></a> [leaf\_private\_key\_filename](#output\_leaf\_private\_key\_filename) | n/a |
+| <a name="output_leaf_private_key_pem"></a> [leaf\_private\_key\_pem](#output\_leaf\_private\_key\_pem) | Leaf - TLS private key |
+| <a name="output_leaf_public_key_openssh"></a> [leaf\_public\_key\_openssh](#output\_leaf\_public\_key\_openssh) | n/a |
+| <a name="output_leaf_public_key_pem"></a> [leaf\_public\_key\_pem](#output\_leaf\_public\_key\_pem) | n/a |
 | <a name="output_private_key_filename"></a> [private\_key\_filename](#output\_private\_key\_filename) | n/a |
 | <a name="output_private_key_name"></a> [private\_key\_name](#output\_private\_key\_name) | n/a |
 | <a name="output_private_key_pem"></a> [private\_key\_pem](#output\_private\_key\_pem) | n/a |

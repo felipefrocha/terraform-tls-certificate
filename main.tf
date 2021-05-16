@@ -3,7 +3,7 @@ terraform {
 }
 
 locals {
-  ca_cert = chomp(var.ca_cert_override == "" ? element(concat(tls_self_signed_cert.ca.*.cert_pem, list("")), 0) : var.ca_cert_override)
+  ca_cert = chomp(var.ca_cert_override == "" ? element(concat(tls_self_signed_cert.ca.*.cert_pem, tolist([""])), 0) : var.ca_cert_override)
 }
 resource "random_id" "name" {
   count = var.create_tls || var.create_key ? 1 : 0
@@ -90,16 +90,16 @@ resource "tls_locally_signed_cert" "leaf" {
 
   cert_request_pem = tls_cert_request.leaf[0].cert_request_pem
 
-  ca_key_algorithm   = !var.ca_override ? element(concat(tls_private_key.ca[0].*.algorithm, list("")), 0) : var.algorithm
-  ca_private_key_pem = var.ca_key_override == "" ? element(concat(tls_private_key.ca[0].*.private_key_pem, list("")), 0) : var.ca_key_override
-  ca_cert_pem        = var.ca_cert_override == "" ? element(concat(tls_self_signed_cert.ca.*.cert_pem, list("")), 0) : var.ca_cert_override
+  ca_key_algorithm   = !var.ca_override ? element(concat(tls_private_key.ca[0].*.algorithm, tolist([""])), 0) : var.algorithm
+  ca_private_key_pem = var.ca_key_override == "" ? element(concat(tls_private_key.ca[0].*.private_key_pem, tolist([""])), 0) : var.ca_key_override
+  ca_cert_pem        = var.ca_cert_override == "" ? element(concat(tls_self_signed_cert.ca.*.cert_pem, tolist([""])), 0) : var.ca_cert_override
 
   validity_period_hours = var.validity_period_hours
   allowed_uses          = var.allowed_uses
 }
 
 resource "null_resource" "download_ca_cert" {
-  count = var.create_tls&& var.download_certs ? 1 : 0
+  count = var.create_tls && var.download_certs ? 1 : 0
 
   # Write the PEM-encoded CA certificate public key to this path (e.g. /etc/tls/ca.crt.pem).
   provisioner "local-exec" {
@@ -108,7 +108,7 @@ resource "null_resource" "download_ca_cert" {
 }
 
 resource "null_resource" "download_leaf_cert" {
-  count = "${var.create_tls&& var.download_certs ? 1 : 0}"
+  count = "${var.create_tls && var.download_certs ? 1 : 0}"
 
   # Write the PEM-encoded certificate public key to this path (e.g. /etc/tls/leaf.crt.pem).
   provisioner "local-exec" {
@@ -122,5 +122,19 @@ resource "null_resource" "download_leaf_private_key" {
   # Write the PEM-encoded leaf certificate private key to this path (e.g. /etc/tls/leaf.key.pem).
   provisioner "local-exec" {
     command = format("echo '%s' > %s-leaf.key.pem && chmod %s '%s-leaf.key.pem'", chomp(tls_private_key.leaf[0].private_key_pem),random_id.name[0].hex,var.permissions,random_id.name[0].hex)
+  }
+}
+
+data "template_file" "file" {
+  template = "${file("${path.root}/outputfile.tpl")}"
+
+  vars = {
+    name            = var.name
+    ca_cert        = element(concat(formatlist("%s-ca", random_id.name.*.hex), tolist([""])), 0)
+    leaf_cert    = element(concat(formatlist("%s-leaf", random_id.name.*.hex), tolist([""])), 0)
+    donwload          = var.download_certs ? "The below certificates and private key have been downloaded locally with the file permissions updated appropriately." : "Certs were not downloaded locally. set \"download_certs\" to true to download."
+    ca_cert_file        = element(concat(formatlist("%s-ca.crt.pem", random_id.name.*.hex), tolist([""])), 0)
+    leaf_cert_file =element(concat(formatlist("%s-leaf.crt.pem", random_id.name.*.hex), tolist([""])), 0)
+    leaf_cert_key = element(concat(formatlist("%s-leaf.key.pem", random_id.name.*.hex), tolist([""])), 0)
   }
 }
