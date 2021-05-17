@@ -126,7 +126,7 @@ resource "null_resource" "download_leaf_private_key" {
 }
 
 data "template_file" "file" {
-  template = "${file("${path.root}/outputfile.tpl")}"
+  template = "${file("${path.module}/outputfile.tpl")}"
 
   vars = {
     name            = var.name
