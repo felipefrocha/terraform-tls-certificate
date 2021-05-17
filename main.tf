@@ -9,7 +9,7 @@ resource "random_id" "name" {
   count = var.create_tls || var.create_key ? 1 : 0
 
   byte_length = 4
-  prefix      =format("%s-",var.name)
+  prefix      = format("%s-", var.name)
 }
 
 /**
@@ -28,7 +28,7 @@ resource "null_resource" "download_private_key" {
   count = var.create_key ? 1 : 0
 
   provisioner "local-exec" {
-    command = format("echo '%s' > %s.key.pem && chmod %s %s.key.pem", tls_private_key.key[0].private_key_pem, random_id.name[0].hex , var.permissions, random_id.name[0].hex)
+    command = format("echo '%s' > %s.key.pem && chmod %s %s.key.pem", tls_private_key.key[0].private_key_pem, random_id.name[0].hex, var.permissions, random_id.name[0].hex)
   }
 }
 
@@ -39,7 +39,7 @@ resource "null_resource" "download_private_key" {
 
 
 resource "tls_private_key" "ca" {
-  count = var.create_tls&& !var.ca_override ? 1 : 0
+  count = var.create_tls && !var.ca_override ? 1 : 0
 
   algorithm   = var.algorithm
   ecdsa_curve = var.ecdsa_curve
@@ -47,7 +47,7 @@ resource "tls_private_key" "ca" {
 }
 
 resource "tls_self_signed_cert" "ca" {
-  count = var.create_tls&& !var.ca_override ? 1 : 0
+  count = var.create_tls && !var.ca_override ? 1 : 0
 
   key_algorithm     = tls_private_key.ca[0].algorithm
   private_key_pem   = var.ca_key_override == "" ? tls_private_key.ca[0].private_key_pem : var.ca_key_override
@@ -63,7 +63,7 @@ resource "tls_self_signed_cert" "ca" {
 }
 
 resource "tls_private_key" "leaf" {
-  count = var.create_tls? 1 : 0
+  count = var.create_tls ? 1 : 0
 
   algorithm   = var.algorithm
   ecdsa_curve = var.ecdsa_curve
@@ -71,7 +71,7 @@ resource "tls_private_key" "leaf" {
 }
 
 resource "tls_cert_request" "leaf" {
-  count = var.create_tls? 1 : 0
+  count = var.create_tls ? 1 : 0
 
   key_algorithm   = tls_private_key.leaf[0].algorithm
   private_key_pem = tls_private_key.leaf[0].private_key_pem
@@ -86,7 +86,7 @@ resource "tls_cert_request" "leaf" {
 }
 
 resource "tls_locally_signed_cert" "leaf" {
-  count = "${var.create_tls? 1 : 0}"
+  count = var.create_tls ? 1 : 0
 
   cert_request_pem = tls_cert_request.leaf[0].cert_request_pem
 
@@ -108,33 +108,33 @@ resource "null_resource" "download_ca_cert" {
 }
 
 resource "null_resource" "download_leaf_cert" {
-  count = "${var.create_tls && var.download_certs ? 1 : 0}"
+  count = var.create_tls && var.download_certs ? 1 : 0
 
   # Write the PEM-encoded certificate public key to this path (e.g. /etc/tls/leaf.crt.pem).
   provisioner "local-exec" {
-    command = format("echo '%s' > %s-leaf.crt.pem && chmod %s '%s-leaf.crt.pem'", chomp(tls_locally_signed_cert.leaf[0].cert_pem),random_id.name[0].hex, var.permissions, random_id.name[0].hex)
+    command = format("echo '%s' > %s-leaf.crt.pem && chmod %s '%s-leaf.crt.pem'", chomp(tls_locally_signed_cert.leaf[0].cert_pem), random_id.name[0].hex, var.permissions, random_id.name[0].hex)
   }
 }
 
 resource "null_resource" "download_leaf_private_key" {
-  count = "${var.create_tls&& var.download_certs ? 1 : 0}"
+  count = var.create_tls && var.download_certs ? 1 : 0
 
   # Write the PEM-encoded leaf certificate private key to this path (e.g. /etc/tls/leaf.key.pem).
   provisioner "local-exec" {
-    command = format("echo '%s' > %s-leaf.key.pem && chmod %s '%s-leaf.key.pem'", chomp(tls_private_key.leaf[0].private_key_pem),random_id.name[0].hex,var.permissions,random_id.name[0].hex)
+    command = format("echo '%s' > %s-leaf.key.pem && chmod %s '%s-leaf.key.pem'", chomp(tls_private_key.leaf[0].private_key_pem), random_id.name[0].hex, var.permissions, random_id.name[0].hex)
   }
 }
 
 data "template_file" "file" {
-  template = "${file("${path.module}/outputfile.tpl")}"
+  template = file("${path.module}/outputfile.tpl")
 
   vars = {
-    name            = var.name
+    name           = var.name
     ca_cert        = element(concat(formatlist("%s-ca", random_id.name.*.hex), tolist([""])), 0)
-    leaf_cert    = element(concat(formatlist("%s-leaf", random_id.name.*.hex), tolist([""])), 0)
-    donwload          = var.download_certs ? "The below certificates and private key have been downloaded locally with the file permissions updated appropriately." : "Certs were not downloaded locally. set \"download_certs\" to true to download."
-    ca_cert_file        = element(concat(formatlist("%s-ca.crt.pem", random_id.name.*.hex), tolist([""])), 0)
-    leaf_cert_file =element(concat(formatlist("%s-leaf.crt.pem", random_id.name.*.hex), tolist([""])), 0)
-    leaf_cert_key = element(concat(formatlist("%s-leaf.key.pem", random_id.name.*.hex), tolist([""])), 0)
+    leaf_cert      = element(concat(formatlist("%s-leaf", random_id.name.*.hex), tolist([""])), 0)
+    download       = var.download_certs ? "The below certificates and private key have been downloaded locally with the file permissions updated appropriately." : "Certs were not downloaded locally. set \"download_certs\" to true to download."
+    ca_cert_file   = element(concat(formatlist("%s-ca.crt.pem", random_id.name.*.hex), tolist([""])), 0)
+    leaf_cert_file = element(concat(formatlist("%s-leaf.crt.pem", random_id.name.*.hex), tolist([""])), 0)
+    leaf_cert_key  = element(concat(formatlist("%s-leaf.key.pem", random_id.name.*.hex), tolist([""])), 0)
   }
 }

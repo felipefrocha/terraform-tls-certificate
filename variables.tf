@@ -73,7 +73,7 @@ variable "organization_name" {
 
 variable "allowed_uses" {
   description = "List of keywords from RFC5280 describing a use that is permitted for the issued certificate. For more info and the list of keywords, see https://www.terraform.io/docs/providers/tls/r/self_signed_cert.html#allowed_uses."
-  type        =  list(string)
+  type        = list(string)
 
   default = [
     "key_encipherment",
@@ -87,13 +87,13 @@ variable "common_name" {
 
 variable "dns_names" {
   description = "List of DNS names for which the certificate will be valid (e.g. foo.hashicorp.com), defaults to empty list."
-  type        =  list(string)
+  type        = list(string)
   default     = []
 }
 
 variable "ip_addresses" {
   description = "List of IP addresses for which the certificate will be valid (e.g. 127.0.0.1), defaults to empty list."
-  type        =  list(string)
+  type        = list(string)
   default     = []
 }
 
