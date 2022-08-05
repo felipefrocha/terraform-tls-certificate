@@ -49,7 +49,7 @@ resource "tls_private_key" "ca" {
 resource "tls_self_signed_cert" "ca" {
   count = var.create_tls && !var.ca_override ? 1 : 0
 
-  key_algorithm     = tls_private_key.ca[0].algorithm
+  #key_algorithm     = tls_private_key.ca[0].algorithm
   private_key_pem   = var.ca_key_override == "" ? tls_private_key.ca[0].private_key_pem : var.ca_key_override
   is_ca_certificate = true
 
@@ -73,7 +73,7 @@ resource "tls_private_key" "leaf" {
 resource "tls_cert_request" "leaf" {
   count = var.create_tls ? 1 : 0
 
-  key_algorithm   = tls_private_key.leaf[0].algorithm
+  #key_algorithm   = tls_private_key.leaf[0].algorithm
   private_key_pem = tls_private_key.leaf[0].private_key_pem
 
   dns_names    = var.dns_names
