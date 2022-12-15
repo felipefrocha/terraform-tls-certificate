@@ -28,7 +28,15 @@ output "public_key_openssh" {
 
 
 output "README" {
-  value = data.template_file.file.rendered
+  value = templatefile("${path.module}/outputfile.tpl", {
+    name           = var.name
+    ca_cert        = element(concat(formatlist("%s-ca", random_id.name.*.hex), tolist([""])), 0)
+    leaf_cert      = element(concat(formatlist("%s-leaf", random_id.name.*.hex), tolist([""])), 0)
+    download       = var.download_certs ? "The below certificates and private key have been downloaded locally with the file permissions updated appropriately." : "Certs were not downloaded locally. set \"download_certs\" to true to download."
+    ca_cert_file   = element(concat(formatlist("%s-ca.crt.pem", random_id.name.*.hex), tolist([""])), 0)
+    leaf_cert_file = element(concat(formatlist("%s-leaf.crt.pem", random_id.name.*.hex), tolist([""])), 0)
+    leaf_cert_key  = element(concat(formatlist("%s-leaf.key.pem", random_id.name.*.hex), tolist([""])), 0)
+  })
 }
 
 
